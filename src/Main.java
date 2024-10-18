@@ -86,6 +86,8 @@ public class Main {
         addDogButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Добавление новой записи в таблицу
+                tableModel.addRow(new Object[]{"Новая собака", "Неизвестная порода", "Новый владелец", "Новый судья", "Нет наград"});
                 unsavedChanges = true; // Устанавливаем флаг при изменении данных
                 JOptionPane.showMessageDialog(mainFrame, "Добавлена новая собака");
             }
@@ -108,13 +110,27 @@ public class Main {
         deleteDogButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(mainFrame, "Вы уверены, что хотите удалить эту запись?", "Подтверждение удаления", JOptionPane.YES_NO_OPTION);
-                if (response == JOptionPane.YES_OPTION) {
-                    unsavedChanges = true; // Устанавливаем флаг при изменении данных
-                    JOptionPane.showMessageDialog(mainFrame, "Запись удалена");
+                int selectedRow = dataTable.getSelectedRow(); // Получение индекса выбранной строки
+                if (selectedRow != -1) {
+                    int response = JOptionPane.showConfirmDialog(mainFrame, "Вы уверены, что хотите удалить эту запись?", "Подтверждение удаления", JOptionPane.YES_NO_OPTION);
+                    if (response == JOptionPane.YES_OPTION) {
+                        tableModel.removeRow(selectedRow); // Удаление строки
+                        unsavedChanges = true; // Устанавливаем флаг при изменении данных
+                        JOptionPane.showMessageDialog(mainFrame, "Запись удалена");
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(mainFrame, "Удаление отменено");
+                    JOptionPane.showMessageDialog(mainFrame, "Пожалуйста, выберите строку для удаления");
                 }
+            }
+        });
+
+        /**
+         * Слушатель для кнопки "Сохранить".
+         */
+        saveDogButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveDataToFile(); // Сохранение данных
             }
         });
 
@@ -143,7 +159,7 @@ public class Main {
     }
 
     /**
-     * Метод для сохранения данных в файл (заглушка для примера).
+     * Метод для сохранения данных в файл.
      */
     private void saveDataToFile() {
         // Логика сохранения данных в файл
